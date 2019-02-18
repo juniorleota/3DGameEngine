@@ -1,5 +1,6 @@
 plugins {
   id 'java'
+  id 'com.stehno.natives' version '0.3.1'
 }
 
 group 'com.jr'
@@ -9,9 +10,18 @@ sourceCompatibility = 1.8
 
 repositories {
   mavenCentral()
+  jcenter()
 }
 
+project.ext.lwjglVersion = "3.2.1"
+
+
 dependencies {
-  testCompile group: 'junit', name: 'junit', version: '4.12'
-  compile group: 'org.lwjgl', name: 'lwjgl', version: '3.2.1'
+  compile "org.lwjgl:lwjgl:${lwjglVersion}"
+  compile "org.lwjgl:lwjgl:${lwjglVersion}:natives-windows"
+  compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}"
+  compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}:natives-windows"
+  compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}"
+  compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}:natives-windows"
+//  testCompile group: 'junit', name: 'junit', version: '4.12'
 }
