@@ -41,7 +41,7 @@ class Mesh {
             colorBuffer = MemoryUtil.memAllocFloat(colors.length);
             colorBuffer.put(colors).flip();
             glBindBuffer(GL_ARRAY_BUFFER, colorVboId);
-            glBufferData(colorVboId, colorBuffer, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, colorBuffer, GL_STATIC_DRAW);
             glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
 
             // create indicies for vertex buffer object
@@ -60,11 +60,11 @@ class Mesh {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);
             }
-            if (indiciesBuffer != null) {
-                MemoryUtil.memFree(indiciesBuffer);
-            }
             if (colorBuffer != null) {
                 MemoryUtil.memFree(colorBuffer);
+            }
+            if (indiciesBuffer != null) {
+                MemoryUtil.memFree(indiciesBuffer);
             }
         }
     }

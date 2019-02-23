@@ -84,6 +84,9 @@ public class Window {
 
     void update() {
         glfwSwapBuffers(window); // swap the color buffers
+        // Poll for window events. The key callback above will only be
+        // invoked during this call.
+        glfwPollEvents();
     }
 
     void cleanup() {

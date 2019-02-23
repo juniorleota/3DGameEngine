@@ -33,14 +33,8 @@ class MainComponent {
     // Run the rendering loop until the user has attempted to close
     // the window or has pressed the ESCAPE key.
     while ( !window.isClosed() ) {
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
       gameRenderer.renderGame();
       window.update();
-
-      // Poll for window events. The key callback above will only be
-      // invoked during this call.
-      glfwPollEvents();
     }
   }
 
