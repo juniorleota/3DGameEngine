@@ -1,6 +1,13 @@
-import com.sun.prism.ps.Shader;
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -9,11 +16,14 @@ class ShaderProgram {
     private int vertexShaderId;
     private int fragmentShaderId;
 
+    private final Map<String, Integer> uniforms;
+
     ShaderProgram() {
         programId = glCreateProgram();
         if (programId == 0) {
             throw new RuntimeException("Could not create program");
         }
+        uniforms = new HashMap<>();
     }
 
     void createVertexShader(final String fileName) {
@@ -40,6 +50,27 @@ class ShaderProgram {
         glAttachShader(programId, shaderId);
 
         return shaderId;
+    }
+
+    void createUniform(String uniformName) {
+        // this get also seems to do write operations
+        int uniformLocation = glGetUniformLocation(programId, uniformName);
+
+        if (uniformLocation < 0) {
+            throw new RuntimeException("Could not find information about uniform: " + uniformName);
+        }
+
+        uniforms.put(uniformName, uniformLocation);
+    }
+
+    void setUniform(String uniformName, Matrix4f mat) {
+        // size of the buffer is small, hence we can use memory stack so that it is automanaged
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer floatBuffer = stack.mallocFloat(16);
+            // weird but this is actually setting the floatbuffer in a get method
+            mat.get(floatBuffer);
+            glUniformMatrix4fv(uniforms.get(uniformName), false, floatBuffer);
+        }
     }
 
     void link() {

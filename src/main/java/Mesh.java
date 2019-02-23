@@ -12,10 +12,12 @@ class Mesh {
     private final int vertexCount;
     private final int vaoId;
     private final int idxVboId;
+    private final int colorVboId;
 
-    Mesh(final float[] positions, final int[] indicies) {
+    Mesh(final float[] positions, final int[] indicies, final float[] colors) {
         FloatBuffer posBuffer = null;
         IntBuffer indiciesBuffer = null;
+        FloatBuffer colorBuffer = null;
         try {
             vertexCount = positions.length;
 
@@ -23,14 +25,24 @@ class Mesh {
             vaoId = glGenVertexArrays();
             glBindVertexArray(vaoId);
 
-            // create the vertex buffer object
-            vboId = glGenBuffers();
+            // Load to cpu memory
             posBuffer = MemoryUtil.memAllocFloat(positions.length);
             posBuffer.put(positions).flip();
+
+            // create the vertex buffer object
+            vboId = glGenBuffers();
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
             glBufferData(GL_ARRAY_BUFFER, posBuffer, GL_STATIC_DRAW);
             // describe the data that you have just loaded to gpu
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+
+            // create colour for vbo
+            colorVboId = glGenBuffers();
+            colorBuffer = MemoryUtil.memAllocFloat(colors.length);
+            colorBuffer.put(colors).flip();
+            glBindBuffer(GL_ARRAY_BUFFER, colorVboId);
+            glBufferData(colorVboId, colorBuffer, GL_STATIC_DRAW);
+            glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
 
             // create indicies for vertex buffer object
             idxVboId = glGenBuffers();
@@ -50,6 +62,9 @@ class Mesh {
             }
             if (indiciesBuffer != null) {
                 MemoryUtil.memFree(indiciesBuffer);
+            }
+            if (colorBuffer != null) {
+                MemoryUtil.memFree(colorBuffer);
             }
         }
     }
@@ -72,6 +87,7 @@ class Mesh {
 
         glBindBuffer(GL_VERTEX_ARRAY, 0);
         glDeleteBuffers(vboId);
+        glDeleteBuffers(colorVboId);
         glDeleteBuffers(idxVboId);
 
         glBindVertexArray(0);

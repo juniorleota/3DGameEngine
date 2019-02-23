@@ -11,8 +11,12 @@ class GameRenderer {
 
     GameRenderer() {
         // todo load this from a obj file so that the information stored is only the filename rather than the vertices data
-        mesh = new Mesh(SampleMeshData.positions, SampleMeshData.indices);
+        mesh = new Mesh(SampleMeshData.positions, SampleMeshData.indices, SampleMeshData.colours);
         shaderProgram = new ShaderProgram();
+        initShader();
+    }
+
+    private void initShader() {
         shaderProgram.createVertexShader("./shaders/vertex.vs");
         shaderProgram.createFragmentShader("./shaders/fragment.fs");
         shaderProgram.link();
