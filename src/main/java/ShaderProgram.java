@@ -4,27 +4,27 @@ import java.io.*;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class ShaderProgram {
+class ShaderProgram {
     private final int programId;
     private int vertexShaderId;
     private int fragmentShaderId;
 
-    public ShaderProgram() {
+    ShaderProgram() {
         programId = glCreateProgram();
         if (programId == 0) {
             throw new RuntimeException("Could not create program");
         }
     }
 
-    public void createVertexShader(final String fileName) {
+    void createVertexShader(final String fileName) {
         vertexShaderId = createShader(loadShader(fileName), GL_VERTEX_SHADER);
     }
 
-    public void createFragmentShader(final String fileName) {
+    void createFragmentShader(final String fileName) {
         fragmentShaderId = createShader(loadShader(fileName), GL_FRAGMENT_SHADER);
     }
 
-    public int createShader(final String shaderCode, final int shaderType) {
+    private int createShader(final String shaderCode, final int shaderType) {
         int shaderId = glCreateShader(shaderType);
         if (shaderId == 0) {
             throw new RuntimeException("Could not create shader");
@@ -42,7 +42,7 @@ public class ShaderProgram {
         return shaderId;
     }
 
-    public void link() {
+    void link() {
         glLinkProgram(programId);
         if (glGetProgrami(programId, GL_LINK_STATUS) == 0) {
             throw new RuntimeException("Error linking Shader code: " + glGetProgramInfoLog(programId, 1024));
@@ -60,22 +60,22 @@ public class ShaderProgram {
         }
     }
 
-    public void bind() {
+    void bind() {
         glUseProgram(programId);
     }
 
-    public void unbind() {
+    void unbind() {
         glUseProgram(0);
     }
 
-    public void cleanUp() {
+    void cleanup() {
         unbind();
         if (programId != 0) {
             glDeleteProgram(programId);
         }
     }
 
-    public static String loadShader(String path) {
+    private static String loadShader(String path) {
         StringBuilder builder = new StringBuilder();
 
         try (InputStream in = Class.forName(ShaderProgram.class.getName()).getResourceAsStream(path);
